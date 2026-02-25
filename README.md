@@ -86,6 +86,29 @@ fly ips list -a openclawbeta
 
 > 배포는 항상 `fly deploy --remote-only`로 진행하므로 로컬에서 Docker 이미지 빌드를 하지 않습니다.
 
+
+## 로그 관련 안내 (질문 주신 Fly 로그)
+
+아래 메시지는 오류가 아니라 **정상 초기화 로그**입니다.
+
+- `Setting up volume 'openclaw_data'`
+- `Uninitialized volume 'openclaw_data', initializing...`
+
+즉, 첫 배포에서 볼륨이 비어 있어 Fly가 초기 포맷/마운트를 수행하는 단계입니다.
+
+실시간 로그가 길게 대기되는 것이 불편하면 아래처럼 확인하세요.
+
+```bash
+# 최근 로그만 확인(대기 없이 종료)
+fly logs -a openclawbeta --no-tail
+
+# 머신 상태 확인
+fly machine list -a openclawbeta
+
+# 특정 머신 상세/최근 이벤트
+fly machine status <MACHINE_ID> -a openclawbeta
+```
+
 ## 접속 포트
 
 - `443/tcp` → KasmVNC Web UI (`:8443`)

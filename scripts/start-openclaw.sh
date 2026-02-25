@@ -3,11 +3,12 @@ set -euo pipefail
 
 export USER=kasm
 export HOME=/home/kasm
+
+mkdir -p /data/openclaw
+chown -R kasm:kasm /data/openclaw
 cd /data/openclaw
 
 if [ ! -f /data/openclaw/.initialized ]; then
-  mkdir -p /data/openclaw
-  chown -R kasm:kasm /data/openclaw
   touch /data/openclaw/.initialized
 fi
 
