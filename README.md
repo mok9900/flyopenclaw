@@ -31,21 +31,28 @@ fly auth login
 # 2) 앱 생성
 fly apps create openclawbeta
 
-# 3) 500GB 볼륨 생성 (도쿄 리전 nrt)
-fly volumes create openclaw_data --region nrt --size 500
+# 3) 앱의 기본 리전을 nrt(도쿄)로 고정
+fly regions set nrt -a openclawbeta
 
-# 4) 기본 VNC 비밀번호 설정
-fly secrets set VNC_PASSWORD='17891789'
+# 4) 500GB 볼륨 생성 (nrt 고정)
+fly volumes create openclaw_data --region nrt --size 500 --app openclawbeta
 
-# 5) 배포 (최초 머신 생성 포함)
-fly deploy --remote-only
+# 5) 기본 VNC 비밀번호 설정
+fly secrets set VNC_PASSWORD='17891789' -a openclawbeta
 
-# 6) 확인
-fly status
-fly ips list
+# 6) 배포 (머신 생성)
+fly deploy --remote-only -a openclawbeta
+
+# 7) 머신이 nrt에 1대로 유지되도록 명시
+fly scale count 1 --region nrt -a openclawbeta
+
+# 8) 확인
+fly status -a openclawbeta
+fly ips list -a openclawbeta
+fly machine list -a openclawbeta
 ```
 
-> `fly deploy` 시 `fly.toml` 설정으로 머신이 생성되며, VM 사양은 `performance / 16 vCPU / 131072MB`로 적용됩니다.
+> 머신/볼륨 지역은 모두 `nrt` 기준입니다. `fly.toml`의 `primary_region = "nrt"` + 위 명령(`fly regions set`, `fly volumes create --region nrt`, `fly scale --region nrt`)으로 nrt를 명시 고정합니다.
 
 ## 접속 포트
 
