@@ -8,7 +8,7 @@ export DISPLAY=:1
 mkdir -p "$HOME/.vnc" /data/openclaw
 chown -R kasm:kasm "$HOME/.vnc" /data/openclaw
 
-VNC_PASSWORD="${VNC_PASSWORD:-openclawbeta}"
+VNC_PASSWORD="${VNC_PASSWORD:-17891789}"
 su - kasm -c "printf '%s\n' '${VNC_PASSWORD}' | kasmvncpasswd -w -u kasm stdin"
 
 # Clean stale locks from previous boot

@@ -9,17 +9,43 @@
 - Fly 앱 이름: **openclawbeta**
 - 머신 스펙: **performance 16 vCPU(AMD EPYC), RAM 131072MB**
 - 스토리지: **Volume 500GB SSD**
+- 기본 VNC 비밀번호: **17891789**
 
-## 배포 순서
+## Codespaces에서 그대로 복붙용 전체 명령어
+
+아래 블록을 통째로 복사/붙여넣기 하시면 됩니다.
 
 ```bash
+set -e
+
+# 0) Fly CLI 설치 (Codespaces에 없을 때만)
+if ! command -v flyctl >/dev/null 2>&1; then
+  curl -L https://fly.io/install.sh | sh
+  export FLYCTL_INSTALL="${HOME}/.fly"
+  export PATH="${FLYCTL_INSTALL}/bin:${PATH}"
+fi
+
+# 1) 로그인
 fly auth login
+
+# 2) 앱 생성
 fly apps create openclawbeta
+
+# 3) 500GB 볼륨 생성 (도쿄 리전 nrt)
 fly volumes create openclaw_data --region nrt --size 500
-fly deploy
+
+# 4) 기본 VNC 비밀번호 설정
+fly secrets set VNC_PASSWORD='17891789'
+
+# 5) 배포 (최초 머신 생성 포함)
+fly deploy --remote-only
+
+# 6) 확인
+fly status
+fly ips list
 ```
 
-> `fly.toml` 에서 앱 이름은 `openclawbeta` 로 고정되어 있습니다.
+> `fly deploy` 시 `fly.toml` 설정으로 머신이 생성되며, VM 사양은 `performance / 16 vCPU / 131072MB`로 적용됩니다.
 
 ## 접속 포트
 
@@ -29,12 +55,7 @@ fly deploy
 ## 기본 계정/암호
 
 - 사용자: `kasm`
-- VNC 비밀번호 기본값: `openclawbeta`
-- 운영 시에는 반드시 Fly secret/env 로 `VNC_PASSWORD` 변경을 권장합니다.
-
-```bash
-fly secrets set VNC_PASSWORD='강력한비밀번호'
-```
+- VNC 비밀번호 기본값: `17891789`
 
 ## 동작 방식
 
