@@ -1,0 +1,39 @@
+app = "openclawbeta"
+primary_region = "nrt"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  OPENCLAW_PORT = "18789"
+  VNC_PORT = "8443"
+
+[[mounts]]
+  source = "openclaw_data"
+  destination = "/data"
+
+[[services]]
+  internal_port = 8443
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    interval = "15s"
+    timeout = "2s"
+    grace_period = "30s"
+
+[[services]]
+  internal_port = 18789
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 18789
+
+[vm]
+  cpu_kind = "performance"
+  cpus = 16
+  memory_mb = 131072
