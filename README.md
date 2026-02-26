@@ -109,6 +109,41 @@ fly machine list -a openclawbeta
 fly machine status <MACHINE_ID> -a openclawbeta
 ```
 
+
+## OpenClaw 크래시루프(Missing config) 해결 반영 내용
+
+이 저장소는 아래를 이미 반영했습니다.
+
+- OpenClaw 설정 경로를 휘발성 홈이 아닌 볼륨 경로로 고정: `OPENCLAW_HOME=/data/.openclaw`
+- 부팅 시 `/data/.openclaw/openclaw.json` 자동 생성/보정
+- `gateway.mode=local` 이 항상 들어가도록 보장
+- (임시 우회용) `OPENCLAW_ALLOW_UNCONFIGURED=1` 설정 시 `--allow-unconfigured` 플래그로 기동 가능
+
+### 배포 후 검증 명령어 (복붙)
+
+```bash
+# 재배포 (Fly 원격 빌드)
+fly deploy --remote-only -a openclawbeta
+
+# 상태 확인
+fly machine list -a openclawbeta
+fly logs -a openclawbeta --no-tail
+
+# openclaw 관련 로그만 확인
+fly ssh console -a openclawbeta -C "tail -n 200 /var/log/supervisor/openclaw.err.log"
+fly ssh console -a openclawbeta -C "tail -n 200 /var/log/supervisor/openclaw.log"
+```
+
+### 컨테이너 내부에서 supervisor 재적용 (필요시)
+
+```bash
+fly ssh console -a openclawbeta
+supervisorctl reread
+supervisorctl update
+supervisorctl restart openclaw
+tail -n 200 /var/log/supervisor/openclaw.err.log
+```
+
 ## 접속 포트
 
 - `443/tcp` → KasmVNC Web UI (`:8443`)

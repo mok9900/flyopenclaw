@@ -6,6 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LC_ALL=en_US.UTF-8 \
     DISPLAY=:1 \
     OPENCLAW_PORT=18789 \
+    OPENCLAW_HOME=/data/.openclaw \
     VNC_PORT=8443
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
